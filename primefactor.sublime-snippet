@@ -1,7 +1,9 @@
 <snippet>
 	<content><![CDATA[
 
-vector<long long> primeFactors(long long n) {
+vector<long long> factorsOf(long long n) {
+
+	if (n < 2) return {};
 	
 	vector<long long> ans;
 	
@@ -20,6 +22,6 @@ vector<long long> primeFactors(long long n) {
 }
 
 ]]></content>
-	<tabTrigger>primefactors</tabTrigger>
+	<tabTrigger>primefactor</tabTrigger>
 	<scope>source.c++</scope>
 </snippet>

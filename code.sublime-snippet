@@ -11,11 +11,15 @@ namespace {
 	#define pl pair<ll,ll>
 	#define vec(type) vector<type>
 	#define all(cont) begin(cont), end(cont)
-	#define ps push_back
-	#define pp pop_back
+	#define pb push_back
+	#define ppb pop_back
 	#define ff first
 	#define ss second
 	#define sz(cont) ((long long) (cont).size())
+	#define PI 3.1415926535897932384626433832795
+	#define M 1000000007
+	#define M1 998244353
+	#define setbits __builtin_popcountll
 	
 	#define rep(itr, start, end) \
 		for (int itr = (start); itr < (end); ++itr)
@@ -84,7 +88,7 @@ namespace {
 		swap(sep, _sep); swap(enl, _enl); pf(t...);
 		swap(sep, _sep); swap(enl, _enl);
 	}
-	template <class... T> void pf1(const T&... t) {
+	template <class... T> void ps(const T&... t) {
 		enl = " "; pf(t...); enl = "\n";
 	}
 	
