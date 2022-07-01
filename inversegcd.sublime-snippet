@@ -1,0 +1,23 @@
+<snippet>
+	<content><![CDATA[
+
+struct GCD { ll X, Y, G; };
+
+GCD gcdEx(ll a, ll b) {
+	if (b == 0) {
+		return {1, 0, a};
+	}
+	GCD g = gcdEx(b, a%b);
+	return {
+		g.Y, g.X - (a/b) * g.Y, g.G
+	};
+}
+
+ll inv(ll a, ll m = ${1:M}) {
+	return (gcdEx(a, m).X + m) % m;
+}
+
+]]></content>
+	<tabTrigger>inversegcd</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

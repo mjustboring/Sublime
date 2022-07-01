@@ -1,0 +1,25 @@
+<snippet>
+	<content><![CDATA[
+
+vector<long long> primeFactors(long long n) {
+	
+	vector<long long> ans;
+	
+	for (long long i = 2; i*i <= n; ++i) {
+		while (n % i == 0) {
+			ans.push_back(i);
+			n /= i;
+		}
+	}
+	
+	if (n > 1) {
+		ans.push_back(n);
+	}
+	
+	return ans;
+}
+
+]]></content>
+	<tabTrigger>primefactors</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

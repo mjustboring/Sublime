@@ -1,0 +1,27 @@
+<snippet>
+	<content><![CDATA[
+
+const int LAST = ${1:86028121}; // value of the last prime
+bool isPrime[LAST+1];
+
+const bool __sieve = []() {
+	
+	memset(isPrime, true, sizeof isPrime);
+	
+	isPrime[0] = isPrime[1] = 0;
+	
+	for (long long i = 2; i*i <= LAST; ++i) {
+		if (isPrime[i]) {
+			for (long long j = i*i; j <= LAST; j += i) {
+				isPrime[j] = false;
+			}
+		}
+	}
+	
+	return 0;
+}();
+
+]]></content>
+	<tabTrigger>sieve</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

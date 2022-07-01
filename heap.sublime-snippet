@@ -1,0 +1,230 @@
+<snippet>
+	<content><![CDATA[
+
+template <class T>
+struct HP {
+	
+	int size = 0;
+	${1:unordered_}map<T,int> idx;
+	vector<pair<T,int>> tree;
+
+	static const T& none() {
+		static T _none = {};
+		return _none;
+	}
+
+	void heapdown(int p, int n) {
+
+		int l = (p << 1) + 1;
+		int r = (p << 1) + 2;
+
+		if (l >= n && r >= n) return;
+
+		int s = getmin(p, l, r, n);
+
+		while (s != p) {
+			swap(tree[s], tree[p]);
+			swap(idx[tree[s].first], idx[tree[p].first]);
+			p = s;
+			l = (p << 1) + 1;
+			r = (p << 1) + 2;
+			s = getmin(p, l, r, n);
+		}
+	}
+
+	void _heapdown(int p, int n) {
+
+		int l = (p << 1) + 1;
+		int r = (p << 1) + 2;
+
+		if (l >= n && r >= n) return;
+
+		int s = getmin(p, l, r, n);
+
+		while (s != p) {
+			swap(tree[s], tree[p]);
+			p = s;
+			l = (p << 1) + 1;
+			r = (p << 1) + 2;
+			s = getmin(p, l, r, n);
+		}
+	}
+
+	void heapup(int i) {
+
+		int p = (i - 1) >> 1;
+		
+		while (i && cmp(tree[i].first, tree[p].first)) {
+			swap(tree[i], tree[p]);
+			swap(idx[tree[i].first], idx[tree[p].first]);
+			i = p;
+			p = (i - 1) >> 1;
+		}
+	}
+
+	int getmin(int p, int l, int r, int n) {
+
+		int s;
+
+		if (r < n) {
+			if (!cmp(tree[l].first, tree[p].first) && 
+				!cmp(tree[r].first, tree[p].first)) {
+				s = p;
+			} else if (!cmp(tree[p].first, tree[l].first) &&
+				!cmp(tree[r].first, tree[l].first)) {
+				s = l;
+			} else {
+				s = r;
+			}
+		} else if (l < n) {
+			if (!cmp(tree[l].first, tree[p].first)) {
+				s = p;
+			} else {
+				s = l;
+			}
+		} else {
+			s = p;
+		}
+
+		return s;
+	}
+	
+	int size() {
+		return size;
+	}
+	
+	bool empty() {
+		return size == 0;
+	}
+
+	HP() {}
+
+	template <class TT>
+	HP(TT st, TT en) {
+
+		while (st != en) {
+			idx[*st] += 1;
+			++st;
+			++size;
+		}
+
+		for (auto &x : idx) {
+			tree.push_back(x);
+		}
+
+		for (int i = (tree.size() >> 1) - 1; i >= 0; --i) {
+			_heapdown(i, tree.size());
+		}
+		for (int i = tree.size()-1; i >= 0; --i) {
+			idx[tree[i].first] = i;
+		}
+	}
+
+	void push(const T &key) {
+		auto p = idx.find(key);
+		if (p == idx.end()) {
+			idx[key] = tree.size();
+			tree.push_back({key, 1});
+			heapup(tree.size()-1);
+		} else {
+			tree[idx[key]].second += 1;
+		}
+		size += 1;
+	}
+
+	T pop(int i = 0) {
+		
+		if (i >= tree.size()) return {};
+		
+		size -= 1;
+
+		if (i+1 == tree.size()) {
+
+			if (tree[i].second > 1) {
+				tree[i].second -= 1;
+				return tree[i].first;
+			}
+
+			T top = move(tree[i].first);
+			tree.pop_back();
+			idx.erase(top);
+			return top;
+		}
+
+		if (tree[i].second > 1) {
+			tree[i].second -= 1;
+			return tree[i].first;
+		}
+		
+		swap(tree[i], tree.back());
+		swap(idx[tree[i].first], idx[tree.back().first]);
+
+		T top = move(tree.back().first);
+		tree.pop_back();
+		idx.erase(top);
+		heapdown(i, tree.size());
+
+		return top;
+	}
+
+	int remove(const T &key) {
+		auto p = idx.find(key);
+		if (p == idx.end()) {
+			return -1;
+		}
+		if (tree[p->second].second > 1) {
+			pop(p->second);
+			return tree[p->second].second;
+		}
+		pop(p->second);
+		return 0;
+	}
+
+	const T& top() {
+		if (tree.size()) return tree.front().first;
+		return none();
+	}
+
+	void sort() {
+
+		for (int i = tree.size()-1; i; --i) {
+			swap(tree[0], tree[i]);
+			_heapdown(0, i);
+		}
+
+		reverse(tree.begin(), tree.end());
+
+		for (int i = tree.size()-1; i >= 0; --i) {
+			idx[tree[i].first] = i;
+		}
+	}
+
+	int count(const T &key) {
+		auto p = idx.find(key);
+		if (p == idx.end()) {
+			return 0;
+		}
+		return tree[p->second].second;
+	}
+
+	friend ostream& operator<< (ostream& out, const HP<T> &obj) {
+		out << "{";
+		for (auto j = obj.tree.begin(), i = j++; i != obj.tree.end(); ++i, ++j) {
+			out << "{" << i->first << ", " << i->second << "}";
+			if (j != obj.tree.end()) {
+				out << ", ";
+			}
+		}
+		out << "}";
+		return out;
+	}
+
+	bool cmp(T& a, T& b) {
+		return a ${2:<} b;
+	}
+};
+
+]]></content>
+	<tabTrigger>heap</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

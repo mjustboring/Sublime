@@ -1,0 +1,18 @@
+<snippet>
+	<content><![CDATA[
+
+ll bex(ll a, ll p, ll m = ${1:M}) {
+	a %= m;
+	ll ans = 1;
+	while (p) {
+		if (p & 1) (ans *= a) %= m;
+		(a *= a) %= m;
+		p >>= 1;
+	}
+	return ans;
+}
+
+]]></content>
+	<tabTrigger>binaryexp</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>
