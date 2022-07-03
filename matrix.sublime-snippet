@@ -1,0 +1,261 @@
+<snippet>
+	<content><![CDATA[
+
+template <class T>
+constexpr T _add(T a, T b) {
+	return ((a % M) + (b % M)) % M;
+}
+template <class T>
+constexpr T _sub(T a, T b) {
+	return (((a % M) - (b % M)) + M) % M;
+}
+template <class T>
+constexpr T _mul(T a, T b) {
+	return ((a % M) * (b % M)) % M;
+}
+
+template <class T = long long>
+struct MAT {
+	
+	vector<vector<T>> a;
+	
+	MAT() {}
+	MAT(int m, int n) : a(m, vector<T>(n)) {}
+	MAT(int m, int n, const vector<T> &v) : a(m, vector<T>(n)) {
+		for (int i = 0, k = 0; i < m && k < v.size(); ++i) {
+			for (int j = 0; j < n && k < v.size(); ++j, ++k) {
+				a[i][j] = v[k];
+			}
+		}
+	}
+	MAT(int m, int n, const T arr[], int size) : a(m, vector<T>(n)) {
+		for (int i = 0, k = 0; i < m && k < size; ++i) {
+			for (int j = 0; j < n && k < size; ++j, ++k) {
+				a[i][j] = arr[k];
+			}
+		}
+	}
+	MAT(const vector<vector<T>> &a) : a(a) {}
+	MAT(vector<vector<T>> &&a) : a(a) {}
+	
+	MAT(const MAT &that) : a(that.a) {}
+	MAT(MAT &&that) : a(that.a) {}
+	
+	MAT& operator= (const MAT &that) {
+		if (this != &that) {
+			a = that.a;
+		}
+		return *this;
+	}
+	
+	MAT& operator= (MAT &&that) {
+		if (this != &that) {
+			a = that.a;
+		}
+		return *this;
+	}
+	
+	vector<T>& operator[] (const size_t i) {
+		return a[i];
+	}
+	
+	MAT& operator+= (const MAT &that) {
+		
+		auto &b = that.a;
+		if (a.size() != b.size()) throw "NOT ADDABLE BY ROW!";
+		if (a.size() == 0) return *this;
+		if (a[0].size() != b[0].size()) throw "NOT ADDABLE BY COL!";
+		if (a[0].size() == 0) return *this;
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < a[0].size(); ++j) {
+				a[i][j] = _add(a[i][j], b[i][j]);
+			}
+		}
+		
+		return *this;
+	}
+	
+	MAT operator+ (const MAT &that) const {
+		return MAT(*this) += that;
+	}
+	
+	MAT& operator+= (const T &v) {
+		
+		if (a.empty() || a[0].empty()) *this;
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < a[0].size(); ++j) {
+				a[i][j] = _add(a[i][j], v);
+			}
+		}
+		
+		return *this;
+	}
+	
+	MAT operator+ (const T &v) const {
+		return MAT(*this) += v;
+	}
+	
+	friend MAT operator+ (const T &v, const MAT& obj) {
+		return MAT(obj) += v;
+	}
+	
+	MAT& operator-= (const MAT &that) {
+		
+		auto &b = that.a;
+		if (a.size() != b.size()) throw "NOT SUBTRACTABLE BY ROW!";
+		if (a.size() == 0) return *this;
+		if (a[0].size() != b[0].size()) throw "NOT SUBTRACTABLE BY COL!";
+		if (a[0].size() == 0) return *this;
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < a[0].size(); ++j) {
+				a[i][j] = _sub(a[i][j], b[i][j]);
+			}
+		}
+		
+		return *this;
+	}
+	
+	MAT& operator-= (const T &v) {
+		
+		if (a.empty() || a[0].empty()) *this;
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < a[0].size(); ++j) {
+				a[i][j] = _sub(a[i][j], v);
+			}
+		}
+		
+		return *this;
+	}
+	
+	MAT operator- (const MAT &that) const {
+		return MAT(*this) -= that;
+	}
+	
+	MAT operator- (const T &v) const {
+		return MAT(*this) -= v;
+	}
+	
+	friend MAT operator- (const T &v, const MAT& obj) {
+		
+		if (obj.a.empty() || obj.a[0].empty()) obj;
+		
+		auto a = obj.a;
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < a[0].size(); ++j) {
+				a[i][j] = _sub(v, a[i][j]);
+			}
+		}
+		
+		return MAT(move(a));
+	}
+	
+	MAT& operator*= (const T &v) {
+		
+		if (a.empty() || a[0].empty()) *this;
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < a[0].size(); ++j) {
+				a[i][j] = _mul(a[i][j], v);
+			}
+		}
+		
+		return *this;
+	}
+	
+	MAT operator* (const T &v) const {
+		return MAT(*this) *= v;
+	}
+	
+	friend MAT operator* (const T &v, const MAT& obj) {
+		return MAT(obj) *= v;
+	}
+	
+	MAT operator* (const MAT &that) const {
+		
+		auto &b = that.a;
+		if (a.empty() || b.empty()) throw "EMPTY MATRIX BY ROW!";
+		if (a[0].empty() || b[0].empty()) throw "EMPTY MATRIX BY COL!";
+		if (a[0].size() != b.size()) throw "NOT MULTIPLICABLE!";
+		
+		vector<vector<T>> c(a.size(), vector<T>(b[0].size()));
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < b[0].size(); ++j) {
+				for (int k = 0; k < b.size(); ++k) {
+					c[i][j] = _add(c[i][j], _mul(a[i][k], b[k][j]));
+				}
+			}
+		}
+		
+		return MAT(move(c));
+	}
+	
+	MAT& operator*= (const MAT &that) {
+		return *this = (*this) * that;
+	}
+	
+	friend ostream& operator<< (ostream &out, const MAT &obj) {
+		
+		auto &a = obj.a;
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < a[0].size(); ++j) {
+				out << a[i][j];
+				if (j+1 != a[0].size()) {
+					out << " ";
+				}
+			}
+			if (i+1 != a.size()) {
+				out << "\n";
+			}
+		}
+		
+		return out;
+	}
+	
+	friend istream& operator>> (istream &in, MAT &obj) {
+		
+		auto &a = obj.a;
+		
+		for (int i = 0; i < a.size(); ++i) {
+			for (int j = 0; j < a[0].size(); ++j) {
+				in >> a[i][j];
+			}
+		}
+		return in;
+	}
+	
+	static MAT I(int n) {
+		vector<vector<T>> a(n, vector<T>(n));
+		for (int i = 0; i < n; ++i) {
+			a[i][i] = 1;
+		}
+		return MAT(move(a));
+	}
+	
+	MAT exp(int p) const {
+		
+		if (a.empty() || a[0].empty()) throw "EMPTY MATRIX!";
+		if (a.size() != a[0].size()) throw "NOT A SQUARE MATRIX!";
+		
+		MAT a = this->a;
+		MAT ans = MAT<T>::I(this->a.size());
+		
+		while (p) {
+			if (p & 1) ans *= a;
+			if (p >>= 1) a *= a;
+		}
+		
+		return ans;
+	}
+};
+$1
+]]></content>
+	<tabTrigger>matrix</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

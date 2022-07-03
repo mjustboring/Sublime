@@ -15,6 +15,7 @@ namespace {
 	#define ppb pop_back
 	#define ff first
 	#define ss second
+	#define mp make_pair
 	#define sz(cont) ((long long) (cont).size())
 	#define PI 3.1415926535897932384626433832795
 	#define M 1000000007
@@ -26,16 +27,10 @@ namespace {
 	#define reps(itr, start, end, step) \
 		for (int itr = (start); itr < (end); itr += (step))
 	
-	#define rep0(itr, end) rep(itr, 0, end)
-	#define reps0(itr, end, step) rep(itr, 0, end, step)
-	
 	#define rev(itr, start, end) \
 		for (int itr = (start-1); itr >= (end); --itr)
 	#define revs(itr, start, end, step) \
 		for (int itr = (start-1); itr >= (end); itr -= (step))
-	
-	#define rev0(itr, start) rep(itr, start, 0)
-	#define revs0(itr, start, step) rep(itr, start, 0, step)
 
 	#define each(it, cont) for (auto &it : cont)
 
@@ -152,8 +147,6 @@ int testCases = 1;
 const bool fastio = []() {
 
 	#ifndef ONLINE_JUDGE
-	    freopen("input", "r", stdin);
-	    freopen("output", "w", stdout);
 	    freopen("error", "w", stderr);
 	#endif
 

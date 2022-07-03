@@ -1,9 +1,9 @@
 <snippet>
 	<content><![CDATA[
 
-struct GCD { ll X, Y, G; };
+struct GCD { long long X, Y, G; };
 
-GCD gcdEx(ll a, ll b) {
+GCD gcdEx(long long a, long long b) {
 	if (b == 0) {
 		return {1, 0, a};
 	}

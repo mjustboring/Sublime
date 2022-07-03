@@ -1,0 +1,27 @@
+<snippet>
+	<content><![CDATA[
+
+long long gcd(long long a, long long b) {
+	return b ? gcd(b, a%b) : a;
+}
+
+const int N = ${1:1e5};
+
+long long arr[N+2];
+long long pfx[N+2];
+long long sfx[N+2];
+
+void gcdps(const int n) {
+	pfx[0] = sfx[n+1] = 0;
+	for (int i = 1; i <= n; ++i) {
+		pfx[i] = gcd(arr[i], pfx[i-1]);
+	}
+	for (int i = n; i >= 1; --i) {
+		sfx[i] = gcd(arr[i], sfx[i+1]);
+	}
+}
+
+]]></content>
+	<tabTrigger>gcdps</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>
