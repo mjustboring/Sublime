@@ -1,0 +1,27 @@
+<snippet>
+	<content><![CDATA[
+
+const int LAST = ${1:1e6};
+int etf[LAST+1];
+
+const bool __etfsieve = []() {
+    
+    for (int i = 0; i <= LAST; ++i) {
+        etf[i] = i;
+    }
+    
+    for (int i = 2; i <= LAST; ++i) {
+        if (etf[i] == i) {
+            for (int j = i; j <= LAST; j += i) {
+                etf[j] -= etf[j] / i;
+            }
+        }
+    }
+    
+    return 0;
+}();
+
+]]></content>
+	<tabTrigger>etfsieve</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>
