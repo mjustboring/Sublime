@@ -1,0 +1,21 @@
+<snippet>
+	<content><![CDATA[
+
+const int LAST = 1e5;
+vector<int> divOf[LAST+1];
+
+const bool __divisorsieve = []() {
+	
+	for (int i = 1; i <= LAST; ++i) {
+		for (int j = i; j <= LAST; j += i) {
+			divOf[j].push_back(i);
+		}
+	}
+	
+	return 0;
+}();
+
+]]></content>
+	<tabTrigger>divisorsieve</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>
