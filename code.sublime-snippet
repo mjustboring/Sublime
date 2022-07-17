@@ -2,25 +2,93 @@
 	<content><![CDATA[
 #include <bits/stdc++.h>
 using namespace std;
+using namespace std::chrono;
+/*
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 
+template <class T, class C = less<T>>
+using Set = tree<T, null_type,
+	C, rb_tree_tag, tree_order_statistics_node_update>;
+*/
 namespace {
 
 	#define ll long long
 	#define ld long double
 	#define ull unsigned long long
-	#define pl pair<ll,ll>
-	#define vec(type) vector<type>
+	#define pll pair<ll,ll>
+	#define pii pair<int,int>
+	#define vec vector
+	#define uset unordered_set
+	#define umap unordered_map
+	#define mset multiset
 	#define all(cont) begin(cont), end(cont)
-	#define pb push_back
-	#define ppb pop_back
+	#define rall(cont) rbegin(cont), rend(cont)
+	#define pub push_back
+	#define pob pop_back
+	#define puf push_front
+	#define pof pop_front
 	#define ff first
 	#define ss second
 	#define mp make_pair
-	#define sz(cont) ((long long) (cont).size())
+	#define sz .size()
 	#define PI 3.1415926535897932384626433832795
 	#define M 1000000007
 	#define M1 998244353
-	#define setbits __builtin_popcountll
+	#define sbits __builtin_popcountll
+	#define dist(...) distance(__VA_ARGS__)
+	#define emax(x) (*max_element(all(x)))
+	#define emin(x) (*min_element(all(x)))
+	
+	time_point<high_resolution_clock> ref_time_point;
+	
+	#define stt ref_time_point = high_resolution_clock::now()
+	#define ent get_time_from_ref_time()
+
+	string get_time_from_ref_time() {
+		auto cur_time_point = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(cur_time_point-ref_time_point);
+		stringstream ss;
+	    ss << setprecision(6) << fixed << duration.count()/1000000.0;
+	    return ss.str();
+	}
+	
+	template <class T>
+	constexpr ll esum(T& t) {
+		return accumulate(all(t), (ll)0);
+	}
+	
+	template <class T, class V>
+	constexpr V esum(T& t, V v) {
+		return accumulate(all(t), v);
+	}
+	
+	template <class T>
+	T rand(T from, T to) {
+		static random_device dev;
+	    static mt19937 gen(dev() ^ duration_cast<microseconds>(
+	    	high_resolution_clock::now().time_since_epoch()).count());
+	    return uniform_int_distribution<T>(from, to)(gen);
+	}
+	
+	template <class T>
+	T rand(T) {
+		return rand(numeric_limits<T>::min(), numeric_limits<T>::max());
+	}
+	
+	template <class T>
+	T frand(T from, T to) {
+		static random_device dev;
+	    static mt19937 gen(dev() ^ duration_cast<microseconds>(
+	    	high_resolution_clock::now().time_since_epoch()).count());
+	    return uniform_real_distribution<T>(from, to)(gen);
+	}
+	
+	template <class T>
+	T frand(T) {
+		return frand(numeric_limits<T>::min(), numeric_limits<T>::max());
+	}
 	
 	#define rep(itr, start, end) \
 		for (int itr = (start); itr < (end); ++itr)
@@ -40,13 +108,13 @@ namespace {
 		for (auto it = rbegin(cont); it != rend(cont); ++it)
 
 	template <class T>
-	constexpr T& minof(T& a, T& b) {
+	constexpr T& minof(T& a, const T& b) {
 		if (b < a) a = b;
 		return a;
 	}
 
 	template <class T>
-	constexpr T& maxof(T& a, T& b) {
+	constexpr T& maxof(T& a, const T& b) {
 		if (b > a) a = b;
 		return a;
 	}
@@ -60,93 +128,106 @@ namespace {
 	string sep = " ";
 	string enl = "\n";
 
-	template <class T>
-	ostream& operator<< (ostream& out, const vector<T> &obj) {
-		for (auto j = obj.begin(), i = j++; i != obj.end(); ++i, ++j) {
-			out << *i;
-			if (j != obj.end()) {
-				out << sep;
+	void _pf(ld t) { cout << t; }
+	void _pf(ll t) { cout << t; }
+	void _pf(ull t) { cout << t; }
+	void _pf(int t) { cout << t; }
+	void _pf(char t) { cout << t; }
+	void _pf(bool t) { cerr << t; }
+	void _pf(double t) { cout << t; }
+	void _pf(string t) { cout << t; }
+	void _pf(unsigned t) { cout << t; }
+	void _pf(const char* t) { cout << t; }
+	
+	template <class T, class V> void _pf(const pair<T, V> &p);
+	template <class T> void _pf(T, T);
+	template <class T> void _pf(const T &t) {
+		_pf(all(t));
+	}
+	
+	template <class T> void _pf(T st, T en) {
+		for (T i = st++; i != en; ++i) {
+			_pf(*i);
+			if (st != en) {
+				cout << sep; ++st;
 			}
 		}
-		return out;
+	}
+	
+	template <class T, class V> void _pf(const pair<T, V> &p) {
+		_pf(p.ff); cout << sep; _pf(p.ss);
 	}
 
+	void pf() { cout << enl; }
 	template <class T> void pf(const T& t) {
-		cout << t << enl;
+		_pf(t); cout << enl;
 	}
 	template <class T, class... TT>
 	void pf(const T& t, const TT&... tt) {
-		cout << t << sep; pf(tt...);
+		_pf(t); cout << sep; pf(tt...);
 	}
-	template <class... T>
-	void pff(string _sep, string _enl, const T&... t) {
-		swap(sep, _sep); swap(enl, _enl); pf(t...);
-		swap(sep, _sep); swap(enl, _enl);
-	}
-	template <class... T> void ps(const T&... t) {
+	template <class... T> void pff(const T&... t) {
 		enl = " "; pf(t...); enl = "\n";
 	}
 	
-	#ifndef ONLINE_JUDGE
-		#define df(x) cerr << #x <<" "; _df(x); cerr << '\n';
+	#ifdef OFFLINE_DEBUGGER_MODE
+		#define df(...) df_(__VA_ARGS__);
+		#define dff(...) dff_(__VA_ARGS__);
+		#define deb(x, ...) { cerr << #x << " "; df(__VA_ARGS__) }
 	#else
-		#define df(x)
+		#define df(...)
+		#define dff(...)
+		#define deb(x, ...)
 	#endif
-
-	void _df(ll t) { cerr << t; }
-	void _df(int t) { cerr << t; }
-	void _df(string t) { cerr << t; }
-	void _df(char t) { cerr << t; }
+	
 	void _df(ld t) { cerr << t; }
-	void _df(double t) { cerr << t; }
+	void _df(ll t) { cerr << t; }
 	void _df(ull t) { cerr << t; }
-
-	template <class T> void _df(const set<T> &v);
-	template <class T> void _df(const vector<T> &v);
-	template <class T> void _df(const multiset<T> &v);
-	template <class T, class V> void _df(const map<T, V> &v);
+	void _df(int t) { cerr << t; }
+	void _df(char t) { cerr << t; }
+	void _df(bool t) { cerr << t; }
+	void _df(double t) { cerr << t; }
+	void _df(string t) { cerr << t; }
+	void _df(unsigned t) { cerr << t; }
+	void _df(const char* t) { cerr << t; }
+	
 	template <class T, class V> void _df(const pair<T, V> &p);
+	template <class T> void _df(T, T);
+	template <class T> void _df(const T &t) {
+		_df(all(t));
+	}
+	
+	template <class T> void _df(T st, T en) {
+		for (T i = st++; i != en; ++i) {
+			_df(*i);
+			if (st != en) {
+				cerr << sep; ++st;
+			}
+		}
+	}
 	
 	template <class T, class V> void _df(const pair<T, V> &p) {
-		cerr << "{"; _df(p.ff);
-		cerr << ","; _df(p.ss);
-		cerr << "}";
+		_df(p.ff); cerr << sep; _df(p.ss);
 	}
-	template <class T> void _df(const vector<T> &v) {
-		cerr << "[ ";
-		for (const T &i : v) {
-			_df(i); cerr << " ";
-		}
-		cerr << "]";
+
+	void df_() { cerr << enl; }
+	template <class T> void df_(const T& t) {
+		_df(t); cerr << enl;
 	}
-	template <class T> void _df(const set<T> &v) {
-		cerr << "[ ";
-		for (const T &i : v) {
-			_df(i); cerr << " ";
-		}
-		cerr << "]";
+	template <class T, class... TT>
+	void df_(const T& t, const TT&... tt) {
+		_df(t); cerr << sep; df_(tt...);
 	}
-	template <class T> void _df(const multiset<T> &v) {
-		cerr << "[ ";
-		for (const T &i : v) {
-			_df(i); cerr << " ";
-		}
-		cerr << "]";
-	}
-	template <class T, class V> void _df(const map<T, V> &v) {
-		cerr << "[ ";
-		for (auto i : v) {
-			_df(i); cerr << " ";
-		}
-		cerr << "]";
+	template <class... T> void dff_(const T&... t) {
+		enl = " "; df_(t...); enl = "\n";
 	}
 }
 
 int testCases = 1;
 
-const bool fastio = []() {
+const bool ____ = []() {
 
-	#ifndef ONLINE_JUDGE
+	#ifdef OFFLINE_DEBUGGER_MODE
 	    freopen("error", "w", stderr);
 	#endif
 

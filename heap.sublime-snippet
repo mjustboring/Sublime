@@ -207,18 +207,6 @@ struct HP {
 		return tree[p->second].second;
 	}
 
-	friend ostream& operator<< (ostream& out, const HP<T> &obj) {
-		out << "{";
-		for (auto j = obj.tree.begin(), i = j++; i != obj.tree.end(); ++i, ++j) {
-			out << "{" << i->first << ", " << i->second << "}";
-			if (j != obj.tree.end()) {
-				out << ", ";
-			}
-		}
-		out << "}";
-		return out;
-	}
-
 	bool cmp(T& a, T& b) {
 		return a ${2:<} b;
 	}

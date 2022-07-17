@@ -1,0 +1,169 @@
+<snippet>
+	<content><![CDATA[
+
+template <class T>
+class LST {
+	
+	int size;
+	vector<T> seg;
+	vector<T> lzy;
+	
+	template <class Itr>
+	void build(Itr st, Itr en, int i = 0) {
+		
+		if (st == en) {
+			seg[i] = *st;
+		} else {
+			
+			int m = distance(st, en) >> 1;
+			int tr = i + ((m + 1) << 1);
+			int tl = i + 1;
+			
+			build(st, st + m, tl);
+			build(st + m + 1, en, tr);
+			
+			merge(i, tl, tr);
+		}
+	}
+	
+	void update(int st, int en, int i, int pos, T val) {
+		
+		int m = (en-st) >> 1;
+		int tr = i + ((m + 1) << 1);
+		int tl = i + 1;
+		
+		if (lzy[i]) {
+			lzyProp(st, en, i, tl, tr, lzy[i]);
+		}
+		
+		if (st == en) {
+			seg[i] = val;
+		} else {
+			
+			m += st;
+			
+			if (pos <= m) {
+				update(st, m, tl, pos, val);
+			} else {
+				update(m+1, en, tr, pos, val);
+			}
+			merge(i, tl, tr);
+		}
+	}
+	
+	void update(int st, int en, int i, int l, int r, T val) {
+		
+		int m = (en-st) >> 1;
+		int tr = i + ((m + 1) << 1);
+		int tl = i + 1;
+		
+		if (lzy[i]) {
+			lzyProp(st, en, i, tl, tr, lzy[i]);
+		}
+		
+		if (r < st || l > en) return;
+		
+		if (st >= l && en <= r) {
+			lzyProp(st, en, i, tl, tr, val);
+			return;
+		}
+		
+		m += st;
+		
+		update(st, m, tl, l, r, val);
+		update(m+1, en, tr, l, r, val);
+		
+		merge(i, tl, tr);
+	}
+	
+	T query(int st, int en, int i, int l, int r) {
+		
+		int m = (en-st) >> 1;
+		int tr = i + ((m + 1) << 1);
+		int tl = i + 1;
+		
+		if (lzy[i]) {
+			lzyProp(st, en, i, tl, tr, lzy[i]);
+		}
+		
+		if (r < st || l > en) return none();
+		if (st >= l && en <= r) return seg[i];
+		
+		m += st;
+		
+		return merge(query(st, m, tl, l, r), query(m+1, en, tr, l, r));
+	}
+	
+	void merge(int i, int l, int r) {
+		seg[i] = merge(seg[l], seg[r]);
+	}
+	
+public:
+
+	LST(int n) : size(n), seg(n << 1), lzy(n << 1) {}
+
+	template <class Itr>
+	LST(Itr st, Itr en) {
+		
+		if (is_same<typename iterator_traits<Itr>::iterator_category, random_access_iterator_tag>::value) {
+			
+			size = distance(st, en);
+			seg.resize(size << 1);
+			lzy.resize(size << 1);
+			build(st, en-1);
+			
+		} else {
+			
+			vector<T> temp(st, en);
+			size = temp.size();
+			seg.resize(size << 1);
+			lzy.resize(size << 1);
+			build(temp.begin(), temp.end()-1);
+		}
+	}
+	
+	void update(int pos, T val) {
+		update(0, size-1, 0, pos, val);
+	}
+	
+	void update(int l, int r, T val) {
+		update(0, size-1, 0, l, r, val);
+	}
+	
+	T query(int l, int r) {
+		return query(0, size-1, 0, l, r);
+	}
+	
+	T query() {
+		return seg[0];
+	}
+	
+private:
+	
+	void lzyProp(int st, int en, int i, int tl, int tr, T val) {
+		
+		seg[i] += (en - st + 1) * val;$3
+
+		if (st != en) {
+			lzy[tl] += val;
+			lzy[tr] += val;
+		}
+		
+		lzy[i] = 0;
+	}
+	
+	T none() {
+		static const T _none = ${2:0};
+		return _none;
+	}
+	
+	T merge(T x, T y) {
+		
+		return ${1:x + y};
+	}
+};
+
+]]></content>
+	<tabTrigger>lazysegmenttree</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

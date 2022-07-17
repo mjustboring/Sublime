@@ -1,0 +1,523 @@
+<snippet>
+	<content><![CDATA[
+
+template <class T>
+class RBT {
+    
+    class RBNode {
+    
+        T data;
+        bool color;
+        int count, size;
+        
+        RBNode *left;
+        RBNode *right;
+        RBNode *parent;
+        
+        void compute() {
+            size = count;
+            if (left) size += left->size;
+            if (right) size += right->size;
+        }
+        
+    public:
+        
+        T V() { return data; }
+        RBNode *L() { return left; }
+        RBNode *R() { return right; }
+        RBNode *P() { return parent; }
+        int S() { return size; }
+        int C() { return count; }
+        int SL() { return left ? left->size : 0; }
+        int SR() { return right ? right->size : 0; }
+        
+        RBNode(T data)
+        : data(data), color(1), count(1),
+          size(1), left(0), right(0), parent(0) {
+        }
+        ~RBNode() {
+            delete left;
+            delete right;
+        }
+        
+        friend RBT;
+    };
+    
+    RBNode *root;
+    bool LL, RR, LR, RL;
+    
+    static RBNode *sibof(RBNode *root) {
+       
+       if (root->parent->left == root) {
+           return root->parent->right;
+       }
+       return root->parent->left;
+    }
+    
+    static RBNode *rotate_left(RBNode* root) {
+       
+       RBNode *temp = root->right;
+       root->right = temp->left;
+       temp->left = root;
+       
+       if (root->right) {
+           root->right->parent = root;
+       }
+       temp->left->parent = temp;
+       
+       root->compute();
+       temp->compute();
+       
+       return temp;
+    }
+    
+    static RBNode *rotate_right(RBNode* root) {
+       
+       RBNode *temp = root->left;
+       root->left = temp->right;
+       temp->right = root;
+       
+       if (root->left) {
+           root->left->parent = root;
+       }
+       temp->right->parent = temp;
+       
+       root->compute();
+       temp->compute();
+       
+       return temp;
+    }
+       
+    RBNode *insert(RBNode *root, T data) {
+        
+        if (root == 0) {
+            return new RBNode(data);
+        }
+        
+        if (data < root->data) {
+            
+            root->left = insert(root->left, data);
+            root->left->parent = root;
+            
+            root->compute();
+            
+            if (root->color && root->left->color) {
+                
+                RBNode *sib = sibof(root);
+                
+                if (sib && sib->color) {
+                    
+                    sib->color = 0;
+                    root->color = 0;
+                    root->parent->color = 1;
+                    
+                } else {
+                    
+                    if (root->parent->left == root) {
+                        LL = true;
+                    } else {
+                        RL = true;
+                    }
+                    
+                    return root;
+                }
+            }
+            
+        } else if (data > root->data) {
+            
+            root->right = insert(root->right, data);
+            root->right->parent = root;
+            
+            root->compute();
+            
+            if (root->color && root->right->color) {
+                
+                RBNode *sib = sibof(root);
+                
+                if (sib && sib->color) {
+                    
+                    sib->color = 0;
+                    root->color = 0;
+                    root->parent->color = 1;
+                    
+                } else {
+                    
+                    if (root->parent->right == root) {
+                        RR = true;
+                    } else {
+                        LR = true;
+                    }
+                    
+                    return root;
+                }
+                
+            }
+        } else {
+            root->count += 1;
+            root->size += 1;
+        }
+        
+        if (LL) {
+            
+            root = rotate_right(root);
+            root->right->color = 1;
+            root->color = 0;
+            
+            LL = 0;
+            
+        } else if (LR) {
+            
+            root->left = rotate_left(root->left);
+            root->left->parent = root;
+            root = rotate_right(root);
+            root->right->color = 1;
+            root->color = 0;
+            
+            LR = 0;
+            
+        } else if (RR) {
+            
+            root = rotate_left(root);
+            root->left->color = 1;
+            root->color = 0;
+            
+            RR = 0;
+            
+        } else if (RL) {
+            
+            root->right = rotate_right(root->right);
+            root->right->parent = root;
+            root = rotate_left(root);
+            root->left->color = 1;
+            root->color = 0;
+            
+            RL = 0;
+        }
+        
+        return root;
+    }
+    
+    RBNode *remove(RBNode *root, T data) {
+        
+        if (root == 0) return 0;
+        
+        if (data < root->data) {
+            
+            root->left = remove(root->left, data);
+            root->left->parent = root;
+            
+            root->compute();
+            
+            if (root->color && root->left->color) {
+                
+                RBNode *sib = sibof(root);
+                
+                if (sib && sib->color) {
+                    
+                    sib->color = 0;
+                    root->color = 0;
+                    root->parent->color = 1;
+                    
+                } else {
+                    
+                    if (root->parent->left == root) {
+                        LL = true;
+                    } else {
+                        RL = true;
+                    }
+                    
+                    return root;
+                }
+            }
+            
+        } else if (data > root->data) {
+            
+            root->right = remove(root->right, data);
+            root->right->parent = root;
+            
+            root->compute();
+            
+            if (root->color && root->right->color) {
+                
+                RBNode *sib = sibof(root);
+                
+                if (sib && sib->color) {
+                    
+                    sib->color = 0;
+                    root->color = 0;
+                    root->parent->color = 1;
+                    
+                } else {
+                    
+                    if (root->parent->right == root) {
+                        RR = true;
+                    } else {
+                        LR = true;
+                    }
+                    
+                    return root;
+                }
+            }
+            
+        } else {
+            
+            if (root->count > 1) {
+                root->count -= 1;
+                root->size -= 1;
+                return root;
+            }
+            
+            RBNode *temp = root;
+            
+            if (root->left == 0 && root->right == 0) {
+            
+                delete temp;
+                return 0;
+            
+            } else if (root->right == 0) {
+            
+                root = root->left;
+                delete temp;
+                return root;
+            
+            } else if (root->left == 0) {
+            
+                root = root->right;
+                delete temp;
+                return root;
+            
+            } else {
+            
+                RBNode *succ = temp->right;
+                if (succ->left) {
+            
+                    while (succ->left) {
+                        temp = succ;
+                        succ = succ->left;
+                    }
+                    root->data = succ->data;
+                    temp->left = succ->right;
+                    delete succ;
+                    return root;
+            
+                } else {
+            
+                    root->data = succ->data;
+                    root->right = succ->right;
+                    delete succ;
+                    return root;
+                }
+            }
+        }
+        
+        if (LL) {
+            
+            root = rotate_right(root);
+            root->right->color = 1;
+            root->color = 0;
+            
+            LL = 0;
+            
+        } else if (LR) {
+            
+            root->left = rotate_left(root->left);
+            root->left->parent = root;
+            root = rotate_right(root);
+            root->right->color = 1;
+            root->color = 0;
+            
+            LR = 0;
+            
+        } else if (RR) {
+            
+            root = rotate_left(root);
+            root->left->color = 1;
+            root->color = 0;
+            
+            RR = 0;
+            
+        } else if (RL) {
+            
+            root->right = rotate_right(root->right);
+            root->right->parent = root;
+            root = rotate_left(root);
+            root->left->color = 1;
+            root->color = 0;
+            
+            RL = 0;
+        }
+        
+        return root;
+    }
+    
+    void print(RBNode *root, int space) {
+        
+        if (root == 0) return;
+        
+        print(root->right, space+4);
+        
+        for (int i = 0; i < space; ++i) {
+            cout << " ";
+        }
+        cout << root->data;
+        cout << "(" << root->size << ")";
+        cout << "(" << root->count << ")";
+        cout << "\n";
+        
+        print(root->left, space+4);
+    }
+    
+    static RBNode *find(RBNode *root, T data) {
+        if (root == 0) return 0;
+        if (data < root->data) {
+            return find(root->left, data);
+        }
+        if (data > root->data) {
+            return find(root->right, data);
+        }
+        return root;
+    }
+    
+    static RBNode *upper(RBNode *root, T data) {
+        if (root == 0) return 0;
+        if (root->data < data) {
+            RBNode *temp = upper(root->right, data);
+            if (temp) return temp;
+        } else if (root->data > data) {
+            RBNode *temp = upper(root->left, data);
+            if (temp && temp->data > data) {
+                return temp;
+            }
+            return root;
+        }
+        return 0;
+    }
+    
+    static RBNode *lower(RBNode *root, T data) {
+        if (root == 0) return 0;
+        if (root->data > data) {
+            RBNode *temp = lower(root->left, data);
+            if (temp) return temp;
+        } else if (root->data < data) {
+            RBNode *temp = lower(root->right, data);
+            if (temp && temp->data < data) {
+                return temp;
+            }
+            return root;
+        }
+        return 0;
+    }
+    
+    static int countLesser(RBNode *root, T data) {
+        if (root == 0) return 0;
+        if (root->data > data) {
+            return countLesser(root->left, data);
+        } else if (root->data < data) {
+            return countLesser(root->right, data) + root->SL() + root->C();
+        }
+        return root->SL();
+    }
+    
+    static int countGreater(RBNode *root, T data) {
+        if (root == 0) return 0;
+        if (root->data < data) {
+            return countGreater(root->right, data);
+        } else if (root->data > data) {
+            return countGreater(root->left, data) + root->SR() + root->C();
+        }
+        return root->SR();
+    }
+    
+    static int count(RBNode *root, T l, T r, T mn, T mx) {
+        
+        if (root == 0) return 0;
+        
+        if (mn >= l && mx <= r) return root->S();
+        
+        if (l > root->data) {
+            return count(root->right, l, r, root->data, mx);
+        }
+        if (r < root->data) {
+            return count(root->left, l, r, mn, root->data);
+        }
+        
+        return {
+            count(root->left, l, r, mn, root->data) +
+            count(root->right, l, r, root->data, mx) +
+            root->C()
+        };
+    }
+    
+public:
+
+    RBT() : root(0),
+    LL(0), RR(0), LR(0), RL(0) {
+    }
+    ~RBT() {
+        delete root;
+    }
+    
+    void insert(T data) {
+        if (root == 0) {
+            root = new RBNode(data);
+            root->color = 0;
+            return;
+        }
+        root = insert(root, data);
+        root->compute();
+        root->color = 0;
+        root->parent = 0;
+    }
+    
+    int size() {
+        return root->size;
+    }
+    
+    void remove(T data) {
+        if (root == 0) return;
+        root = remove(root, data);
+    }
+    
+    RBNode *find(T data) const {
+        if (root == 0) return 0;
+        return find(root, data);
+    }
+    
+    RBNode *upper(T data) {
+        if (root == 0) return 0;
+        return upper(root, data);
+    }
+    
+    RBNode *lower(T data) {
+        if (root == 0) return 0;
+        return lower(root, data);
+    }
+    
+    void print() {
+        if (root == 0) return;
+        print(root, 0);
+    }
+    
+    int countLesser(T data) {
+        return countLesser(root, data);
+    }
+    
+    int countGreater(T data) {
+        return countGreater(root, data);
+    }
+    
+    int count(T data) {
+        RBNode *temp = find(data);
+        if (temp) return temp->count;
+        return 0;
+    }
+    
+    int count(T l, T r) {
+        return count(root, l, r, numeric_limits<T>::min(), numeric_limits<T>::max());
+    }
+};
+
+]]></content>
+	<tabTrigger>redblacktree</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

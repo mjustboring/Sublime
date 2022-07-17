@@ -1,0 +1,58 @@
+<snippet>
+	<content><![CDATA[
+
+template <class T>
+struct STAB {
+	
+	int size;
+	vector<vector<T>> tab;
+	vector<int> log;
+	
+	template <class Itr>
+	STAB(Itr st, Itr en) {
+		
+		size = distance(st, en);
+		computeLog();
+		tab.resize(log[size]+1, vector<T>(size));
+		build(st);
+	}
+	
+	void computeLog() {
+		log.resize(size+1);
+		for (int i = 2; i <= size; ++i) {
+			log[i] = log[i >> 1] + 1;
+		}
+	}
+	
+	template <class Itr>
+	void build(Itr itr) {
+		
+		for (int i = 0; i < size; ++i, ++itr) {
+			tab[0][i] = *itr;
+		}
+		
+		for (int j = 1; j <= log[size]; ++j) {
+			for (int i = 0; i + (1 << j) <= size; ++i) {
+				tab[j][i] = merge(tab[j-1][i], tab[j-1][i+(1<<(j-1))]);
+			}
+		}
+	}
+	
+	T query(int l, int r) {
+		int j = log[r - l + 1];
+		return merge(tab[j][l], tab[j][r-(1<<j)+1]);
+	}
+	
+	T query() {
+		return query(0, size-1);
+	}
+	
+	T merge(T x, T y) {
+		return ${1:min(x, y);}
+	}
+};
+
+]]></content>
+	<tabTrigger>sparsetable</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

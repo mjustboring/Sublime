@@ -2,6 +2,7 @@
 	"cmd": [
 	  "g++.exe",
  	    "-std=c++17",
+ 	    "-DOFFLINE_DEBUGGER_MODE",
  	      "${file}", "-o",
    		    "${file_base_name}.exe",
               "&&", "${file_base_name}.exe<input>output"
