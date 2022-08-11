@@ -1,0 +1,41 @@
+<snippet>
+	<content><![CDATA[
+
+const long long L = 1e12;
+const long long R = 1e12+1e2;
+const long long S = sqrt(R)+1;
+
+vector<bool> isPrime(R-L+1, 1);
+vector<bool> _isPrime(S, 1);
+
+const bool __segsieve = []() {
+    
+    _isPrime[0] = _isPrime[1] = 0;
+    
+    for (long long i = 2; i < S; ++i) {
+        
+        if (_isPrime[i]) {
+            
+            long long j = i*i;
+            
+            for (; j < S; j += i) {
+                _isPrime[j] = 0;
+            }
+            
+            j = max(i*i, (L+i-1)/i*i);
+            
+            for (; j <= R; j += i) {
+                isPrime[j-L] = 0;
+            }
+        }
+    }
+    
+    if (L == 1) isPrime[0] = 0;
+    
+    return 0;
+}();
+
+]]></content>
+	<tabTrigger>segmentedsieve</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

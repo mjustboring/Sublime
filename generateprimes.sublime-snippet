@@ -4,7 +4,7 @@
 const int COUNT = ${1:5000000}; // count of primes to be generated
 const int LAST = ${2:86028121}; // value of the last prime
 
-int prime[COUNT+1];
+int prime[COUNT];
 bool isPrime[LAST+1];
 
 const bool __primes = []() {
@@ -21,9 +21,9 @@ const bool __primes = []() {
 		}
 	}
 	
-	int n = 2, i = 1;
+	int n = 2, i = 0;
 	
-	for (; i <= COUNT && n <= LAST; ++n) {
+	for (; i < COUNT && n <= LAST; ++n) {
 		if (isPrime[n]) {
 			prime[i] = n;
 			i += 1;

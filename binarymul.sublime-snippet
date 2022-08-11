@@ -1,0 +1,18 @@
+<snippet>
+	<content><![CDATA[
+
+ull bmu(ull a, ull p, ull m = M) {
+	a %= m;
+	ull ans = 0;
+	while (p) {
+		if (p & 1) (ans += a) %= m;
+		(a += a) %= m;
+		p >>= 1;
+	}
+	return ans;
+}
+
+]]></content>
+	<tabTrigger>binarymul</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>

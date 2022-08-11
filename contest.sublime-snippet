@@ -1,8 +1,8 @@
 <snippet>
 	<content><![CDATA[
+
 #include <bits/stdc++.h>
 using namespace std;
-using namespace std::chrono;
 
 /*
 #include <ext/pb_ds/assoc_container.hpp>
@@ -13,6 +13,13 @@ template <class T, class C = less<T>>
 using Set = tree<T, null_type,
 	C, rb_tree_tag, tree_order_statistics_node_update>;
 */
+
+const bool ____ = []() {
+	ios::sync_with_stdio(0);
+	cout.tie(0);
+	cin.tie(0);
+	return 0;
+}();
 
 template <class T>
 using minh = priority_queue<T, vector<T>, greater<T>>;
@@ -58,19 +65,6 @@ using maxh = priority_queue<T>;
 #define emax(...) _emaxmin(__VA_ARGS__, _emax2, _emax1)(__VA_ARGS__)
 #define emin(...) _emaxmin(__VA_ARGS__, _emin2, _emin1)(__VA_ARGS__)
 
-time_point<high_resolution_clock> ref_time_point;
-
-#define stt ref_time_point = high_resolution_clock::now()
-#define ent get_time_from_ref_time()
-
-string get_time_from_ref_time() {
-	auto cur_time_point = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(cur_time_point-ref_time_point);
-	stringstream ss;
-    ss << setprecision(6) << fixed << duration.count()/1000000.0;
-    return ss.str();
-}
-
 template <class T>
 constexpr ll esum(T& t) {
 	return accumulate(all(t), (ll)0);
@@ -79,47 +73,6 @@ constexpr ll esum(T& t) {
 template <class T, class V>
 constexpr V esum(T& t, V v) {
 	return accumulate(all(t), v);
-}
-
-template <class T>
-T rand(T from, T to) {
-	static random_device dev;
-    static mt19937 gen(dev() ^ duration_cast<microseconds>(
-    	high_resolution_clock::now().time_since_epoch()).count());
-    return uniform_int_distribution<T>(from, to)(gen);
-}
-
-template <>
-float rand(float from, float to) {
-	static random_device dev;
-    static mt19937 gen(dev() ^ duration_cast<microseconds>(
-    	high_resolution_clock::now().time_since_epoch()).count());
-    return uniform_real_distribution<float>(from, to)(gen);
-}
-
-template <>
-double rand(double from, double to) {
-	static random_device dev;
-    static mt19937 gen(dev() ^ duration_cast<microseconds>(
-    	high_resolution_clock::now().time_since_epoch()).count());
-    return uniform_real_distribution<double>(from, to)(gen);
-}
-
-template <>
-long double rand(long double from, long double to) {
-	static random_device dev;
-    static mt19937 gen(dev() ^ duration_cast<microseconds>(
-    	high_resolution_clock::now().time_since_epoch()).count());
-    return uniform_real_distribution<long double>(from, to)(gen);
-}
-
-int rand() {
-	return rand(numeric_limits<int>::min(), numeric_limits<int>::max());
-}
-
-template <class T>
-T rand() {
-	return rand(numeric_limits<T>::min(), numeric_limits<T>::max());
 }
 
 #define rep1(i, en) \
@@ -183,12 +136,6 @@ T maxof(const T& a, const TT&... b) {
 	return ::max(a, maxof(b...));
 }
 
-void sf() {}
-template <class T, class... TT>
-void sf(T& t, TT&... tt) {
-	cin >> t; sf(tt...);
-}
-
 string sep = " ";
 string enl = "\n";
 
@@ -239,86 +186,21 @@ void pfc(string _sep, string _enl, const T&... t) {
 	swap(_sep, sep); swap(_enl, enl);
 }
 
-#ifdef OFFLINE_DEBUGGER_MODE
-	#define df(...) df_(__VA_ARGS__);
-	#define dff(...) dff_(__VA_ARGS__);
-	#define deb(x, ...) { cerr << #x << " "; df(__VA_ARGS__) }
-#else
-	#define df(...)
-	#define dff(...)
-	#define deb(x, ...)
-#endif
+////////////////////////////////////////////////////////////////
 
-void _df(ld t) { cerr << t; }
-void _df(ll t) { cerr << t; }
-void _df(ull t) { cerr << t; }
-void _df(int t) { cerr << t; }
-void _df(char t) { cerr << t; }
-void _df(bool t) { cerr << t; }
-void _df(double t) { cerr << t; }
-void _df(string t) { cerr << t; }
-void _df(unsigned t) { cerr << t; }
-void _df(const char* t) { cerr << t; }
-
-template <class T, class V> void _df(const pair<T, V> &p);
-template <class T> void _df(T, T);
-template <class T> void _df(const T &t) {
-	_df(all(t));
-}
-
-template <class T> void _df(T st, T en) {
-	for (T i = st++; i != en; ++i) {
-		_df(*i);
-		if (st != en) {
-			cerr << sep; ++st;
-		}
-	}
-}
-
-template <class T, class V> void _df(const pair<T, V> &p) {
-	_df(p.ff); cerr << sep; _df(p.ss);
-}
-
-void df_() { cerr << enl; }
-template <class T> void df_(const T& t) {
-	_df(t); cerr << enl;
-}
-template <class T, class... TT>
-void df_(const T& t, const TT&... tt) {
-	_df(t); cerr << sep; df_(tt...);
-}
-template <class... T> void dff_(const T&... t) {
-	enl = " "; df_(t...); enl = "\n";
-}
-
-int testCases = 1;
-
-const bool ____ = []() {
-
-	#ifdef OFFLINE_DEBUGGER_MODE
-	    freopen("error", "w", stderr);
-	#endif
-
-	ios::sync_with_stdio(0);
-	cout.tie(0);
-	cin.tie(0);
-	return 0;
-}();
-
-void solve();
-
-int main() {
-	// cin >> testCases;
-	while (testCases--) solve();
-}
-
-/////////////////////////////////////////////////////////////////////
-
-void solve() {
+struct Solution {
 	
 	$1
+};
+
+////////////////////////////////////////////////////////////////
+
+int main() {
+	
+	
 }
+
 ]]></content>
-	<tabTrigger>code</tabTrigger>
+	<tabTrigger>contest</tabTrigger>
 	<scope>source.c++</scope>
 </snippet>

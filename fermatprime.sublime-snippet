@@ -1,0 +1,48 @@
+<snippet>
+	<content><![CDATA[
+
+ll bmu(ll a, ll p, ll m = M) {
+	a %= m;
+	ll ans = 0;
+	while (p) {
+		if (p & 1) (ans += a) %= m;
+		(a += a) %= m;
+		p >>= 1;
+	}
+	return ans;
+}
+
+ll bex(ll a, ll p, ll m = M) {
+	a %= m;
+	ll ans = 1;
+	while (p) {
+		if (p & 1) {
+		    ans = bmu(ans, a, m);
+		}
+		a = bmu(a, a, m);
+		p >>= 1;
+	}
+	return ans;
+}
+
+bool isPrime(ll n, int iter = 5) {
+    
+    if (n < 5) {
+        if (n == 2 || n == 3) return 1;
+        return 0;
+    }
+    
+    while (--iter >= 0) {
+        ll a = rand(2, n-2);
+        if (bex(a, n-1, n) != 1) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+]]></content>
+	<tabTrigger>fermatprime</tabTrigger>
+	<scope>source.c++</scope>
+</snippet>
